@@ -1,6 +1,9 @@
 name: llmifier
 description: A CLI tool to extract project documentation into a single file optimized for LLMs.
 version: 0.0.3
+homepage: https://github.com/PhilippHGerber/llmifier
+repository: https://github.com/PhilippHGerber/llmifier
+issue_tracker: https://github.com/PhilippHGerber/llmifier/issues
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -22,3 +25,5 @@ dev_dependencies:
 
 executables:
   llmifier: main
+
+license: MIT
