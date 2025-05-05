@@ -1,0 +1,22 @@
+# Dart und Flutter spezifisch
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# Generierte Dateien
+*.g.dart
+*.freezed.dart
+llmifier_output.txt
+
+# IDE-spezifische Dateien
+.idea/
+.vscode/
+*.iml
+
+# Betriebssystem-spezifische Dateien
+.DS_Store
+Thumbs.db
+llms.txt
+llms-*.txt
+test.txt
