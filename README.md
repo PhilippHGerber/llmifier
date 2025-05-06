@@ -1,83 +1,134 @@
-# llmifier • [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# llmifier • [![pub package](https://img.shields.io/pub/v/llmifier.svg)](https://pub.dev/packages/llmifier) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**A Dart CLI tool to extract, structure, and consolidate Dart & Flutter project files into a single, LLM-friendly context.**
+**Transform your Dart & Flutter projects into optimized LLM context – get better code generation, more insightful reviews, and precise answers.**
 
----
+<p align="center">
+  <img src="https://raw.githubusercontent.com/PhilippHGerber/llmifier/main/images/llmifier-flow.webp" alt="llmifier workflow" width="600">
+</p>
 
-## Key Features
+## What llmifier Does
 
-* 🎯 **Targeted Extraction:** Focuses on Dart/Flutter projects, understanding typical structures (`lib/`, `bin/`, `test/`, etc.).
-* ⚙️ **Flexible Filtering:** Uses `glob` patterns (like `.gitignore`) for precise control over included and excluded files.
-* 🧠 **Semantic Ordering:** Prioritizes files logically (Docs, Metadata, API, etc.) for improved LLM comprehension (customizable via config).
-* 🏷️ **Per-File Versioning:** Embeds the `pubspec.yaml` version in each file marker (`<!-- BEGIN FILE [vX.Y.Z]: path/to/file -->`) for unambiguous context.
-* ✨ **Extraction Modes:**
-  * `full`: Extracts the complete content of matched files.
-  * `api`: Extracts only the public API surface (classes, functions, variables) along with documentation comments, powered by the `analyzer` package. Ideal for providing usage context.
-* 🔧 **Configuration:** Uses a clear `llmifierrc.yaml` file alongside CLI arguments (CLI overrides YAML, which overrides defaults).
-* 🚀 **Init Command:** Quickly generates a default `llmifierrc.yaml` configuration file (`llmifier --init`).
+llmifier extracts and organizes your Dart/Flutter code into a single file that LLMs can understand perfectly:
 
-## Installation
+- ✅ **Smart Context Compression** - Feed entire projects to LLMs, even with limited context windows
+- ✅ **Semantic Organization** - Files ordered logically (Docs → Config → API → Tests) for optimal comprehension
+- ✅ **Version Tracking** - Each file tagged with package version for accurate historical analysis
+- ✅ **API Focus** - Extract either full code or just public API surface with documentation
+- ✅ **Developer-Friendly** - Simple CLI workflow integrates with your existing development process
 
-### Global Activation for CLI usage
+## Quick Start
 
 ```bash
+# Install globally
 dart pub global activate llmifier
-```
 
-Now you can run `llmifier` from anywhere.
-
-## Usage
-
-```bash
-# Generate output in the current directory (default: llms.txt)
+# Run in your project directory
 llmifier
 
-# Specify output file
-llmifier -o my_project_context.txt
+# That's it! Find your LLM-ready project in llms.txt
+```
 
-# Specify project directory
+## Example: From Fragmented Files to LLM-Ready Context
+
+```
+📁 Your Flutter Project      ➡️   📄 Single LLM-Optimized File
+├── README.md                     <!-- BEGIN FILE: [v1.2.3] README.md -->
+├── pubspec.yaml                  # Project documentation...
+├── lib/                          <!-- END FILE: [v1.2.3] README.md -->
+│   ├── main.dart
+│   └── src/                      <!-- BEGIN FILE: [v1.2.3] pubspec.yaml -->
+│       ├── models.dart           # Package configuration...
+│       └── utils.dart            <!-- END FILE: [v1.2.3] pubspec.yaml -->
+└── test/
+    └── widget_test.dart          <!-- BEGIN FILE: [v1.2.3] lib/main.dart -->
+                                  # Main app code...
+                                  <!-- END FILE: [v1.2.3] lib/main.dart -->
+
+                                  <!-- BEGIN FILE: [v1.2.3] lib/src/models.dart -->
+                                  # Model definitions...
+                                  <!-- END FILE: [v1.2.3] lib/src/models.dart -->
+```
+
+## Command Options
+
+```bash
+# Generate API-only output with cleaner context
+llmifier -m api -o llms-api.txt
+
+# Process a specific project directory
 llmifier -p path/to/your/project
 
-# Use API extraction mode
-llmifier -m api
-
-# Use API mode with a specific output file
-llmifier --mode=api --output=llms-api.txt
-
-# Get verbose logging during processing
-llmifier -l
-
-# Generate a default config file in the current directory
+# Generate a default config file
 llmifier -i
 
-# Show help message
+# See all options
 llmifier -h
 ```
 
-**Why the `[v1.2.3]` tag in markers?**
-This small detail is vital! It ensures the LLM always knows exactly which version of your code a specific file belongs to, preventing confusion when analyzing changes or comparing different versions side-by-side.
+## How Developers Use llmifier
 
-## Configuration (`llmifierrc.yaml`)
+### For Code Generation
+Structure your whole project context to get precise, relevant code generation that fits your architecture and styles:
 
-Create a `llmifierrc.yaml` file in your project root (or generate one using `llmifier --init`) to customize behavior.
+```
+# Create feature with project context
+1. Run: llmifier
+2. Paste llms.txt into your LLM
+3. Prompt: "Add a user authentication feature matching our existing architecture"
+```
 
-**Configuration Hierarchy:** CLI Arguments > `llmifierrc.yaml` > Default Settings
+### For Code Reviews
+Get meaningful, holistic code reviews that understand your entire project:
 
-## Use Cases
+```
+# Compare versions for insightful review
+1. Run: llmifier on version 1.0
+2. Run: llmifier on version 1.1
+3. Prompt: "What architectural changes were made between these versions?"
+```
 
-* **LLM Code Generation:** Provide comprehensive project context for generating new features or fixing bugs.
-* **LLM Code Review:** Give the LLM a structured overview for more accurate analysis and suggestions.
-* **LLM-Powered Documentation:** Generate technical documentation or summaries based on the actual codebase structure.
-* **Onboarding:** Help new team members (or an LLM assistant) quickly grasp the project layout and key components.
-* **Version Comparison:** Feed outputs from two different versions to an LLM for detailed change analysis.
+### For Documentation
+Generate comprehensive documentation based on actual code structure:
+
+```
+# Create targeted API documentation
+1. Run: llmifier -m api
+2. Prompt: "Create developer documentation for our public API"
+```
+
+### For Onboarding
+Help new team members (or your LLM assistant) quickly understand your codebase:
+
+```
+# Create onboarding guide
+1. Run: llmifier
+2. Prompt: "Explain the architecture and key components of this project"
+```
+
+## Customizing Extraction
+
+Create a `llmifierrc.yaml` in your project root (or generate one with `llmifier -i`):
+
+```yaml
+# Basic configuration
+mode: api  # 'full' or 'api'
+output: project-context.txt
+
+# File selection patterns
+include:
+  - "**README.md"
+  - "**lib/**.dart"
+  - "**test/integration/**.dart"
+
+exclude:
+  - "**build"
+  - "**.g.dart"
+```
+
 
 ## Contributing
 
 Contributions are welcome! Please feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/PhilippHGerber/llmifier).
-
-## Reporting Issues
-
-Please report any bugs or feature requests on the [GitHub issue tracker](https://github.com/PhilippHGerber/llmifier/issues).
 
 ## License
 
