@@ -7,7 +7,6 @@ pubspec.lock
 # Generierte Dateien
 *.g.dart
 *.freezed.dart
-llmifier_output.txt
 
 # IDE-spezifische Dateien
 .idea/
@@ -17,6 +16,4 @@ llmifier_output.txt
 # Betriebssystem-spezifische Dateien
 .DS_Store
 Thumbs.db
-llms.txt
 llms-*.txt
-test.txt
