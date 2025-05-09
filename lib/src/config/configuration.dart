@@ -1,6 +1,6 @@
-// lib/src/config/configuration.dart
-
 import '../models/enums.dart';
+import 'configurable_file_group.dart';
+import 'sort_by_option.dart';
 
 /// Represents the fully resolved configuration for the llmifier tool.
 ///
@@ -19,14 +19,18 @@ class Configuration {
   /// The determined extraction mode.
   final ExtractionMode mode;
 
-  /// List of glob patterns for files/directories to include.
+  /// List of glob patterns for files/directories to include globally.
   final List<String> includePatterns;
 
-  /// List of glob patterns for files/directories to exclude.
+  /// List of glob patterns for files/directories to exclude globally.
   final List<String> excludePatterns;
 
   /// Whether verbose output is enabled.
   final bool verbose;
+
+  /// The user-defined or default configuration for file ordering.
+  /// The order of groups in this list determines their output priority.
+  final List<ConfigurableFileGroup> fileOrderingGroups;
 
   /// Creates a new, fully resolved [Configuration] instance.
   const Configuration({
@@ -37,9 +41,10 @@ class Configuration {
     required this.includePatterns,
     required this.excludePatterns,
     required this.verbose,
+    required this.fileOrderingGroups,
   });
 
-  /// Provides the default configuration values using effective glob patterns.
+  /// Provides the default configuration values.
   factory Configuration.defaults() {
     // --- Define the effective default patterns based on testing ---
     final defaultIncludes = [
@@ -54,6 +59,9 @@ class Configuration {
       "**bin/**.dart",
       "**test/**.dart",
       "**example/**.dart",
+      // Other common file types
+      "**analysis_options.yaml",
+      "**build.yaml",
     ];
 
     final defaultExcludes = [
@@ -77,35 +85,102 @@ class Configuration {
       "**macos",
       "**linux",
       "**windows",
+      // All Hidden Files/Dirs
+      ".*",
+      "**/.*",
+      // Output file itself (will be dynamically added by ConfigLoader)
+      "llms*.txt",
+      "**/llms*.txt",
+    ];
 
-      // All Hidden Files/Dirs (Root + Nested) -> Requires two patterns
-      ".*", // Root hidden files/dirs
-      "**/.*", // Nested hidden files/dirs
-
-      // Output file itself (Root + Nested) - Use filename and **/filename
-      // The actual name 'llms.txt' is the default outputPath below
-      "llms*.txt", // Root (Matches the default outputPath)
-      "**/llms*.txt", // Nested
+    // --- Define Default File Ordering Groups ---
+    // This mimics the spirit of the original v0.0.3 fixed ordering.
+    final defaultFileOrderingGroups = [
+      ConfigurableFileGroup(
+        name: "Documentation",
+        patterns: [
+          "README.md",
+          "CHANGELOG.md",
+          "LICENSE",
+          "CONTRIBUTING.md",
+          "docs/**",
+        ],
+        order: ["README.md", "CHANGELOG.md", "LICENSE", "CONTRIBUTING.md"],
+        sortBy: SortByOption.alphabetical,
+      ),
+      ConfigurableFileGroup(
+        name: "Metadata",
+        patterns: ["pubspec.yaml", "analysis_options.yaml", "build.yaml"],
+        order: ["pubspec.yaml", "analysis_options.yaml", "build.yaml"],
+        sortBy: SortByOption.alphabetical,
+      ),
+      ConfigurableFileGroup(
+        name: "Executable",
+        patterns: ["bin/**"],
+        sortBy: SortByOption.depthFirst,
+      ),
+      ConfigurableFileGroup(
+        name: "Application Code",
+        patterns: ["lib/**"],
+        sortBy: SortByOption.depthFirst,
+      ),
+      ConfigurableFileGroup(
+        name: "Packages",
+        patterns: ["packages/**"],
+        order: ["README.md", "CHANGELOG.md", "pubspec.yaml"],
+        sortBy: SortByOption.depthFirst,
+      ),
+      ConfigurableFileGroup(
+        name: "Example",
+        patterns: ["example/**"],
+        order: ["README.md", "CHANGELOG.md", "pubspec.yaml"],
+        sortBy: SortByOption.depthFirst,
+      ),
+      ConfigurableFileGroup(
+        name: "Test",
+        patterns: ["test/**"],
+        sortBy: SortByOption.depthFirst,
+      ),
+      ConfigurableFileGroup(
+        name: "Other Project Files", // For other top-level config or scripts
+        patterns: ["*.yaml", "*.json", "*.toml", "*.sh", "*.bat"],
+        sortBy: SortByOption.alphabetical,
+      ),
+      ConfigurableFileGroup(
+        name: "Other (Catch-all)",
+        patterns: ["**/*"], // Must be last to catch anything not matched above
+        sortBy: SortByOption.alphabetical,
+      ),
     ];
 
     return Configuration(
-      outputPath: 'llms.txt', // Default output file name
-      projectPath: '.', // Default project path (current directory)
-      projectType: ProjectType.dart, // Default project type
-      mode: ExtractionMode.full, // Default mode
-      // Use the effective patterns defined above
+      outputPath: 'llms.txt',
+      projectPath: '.',
+      projectType: ProjectType.dart,
+      mode: ExtractionMode.full,
       includePatterns: defaultIncludes,
       excludePatterns: defaultExcludes,
-      verbose: false, // Default verbosity
+      verbose: false,
+      fileOrderingGroups: defaultFileOrderingGroups,
     );
   }
 
   @override
   String toString() {
-    // Useful for debugging
-    return 'Configuration(outputPath: $outputPath, projectPath: $projectPath, '
-        'projectType: $projectType, mode: $mode, '
-        'includePatterns: $includePatterns, excludePatterns: $excludePatterns, '
-        'verbose: $verbose)';
+    final groupsString = fileOrderingGroups
+        .map(
+          (g) => g.toString(),
+        )
+        .join(',\n    ');
+    return 'Configuration(\n'
+        '  outputPath: $outputPath,\n'
+        '  projectPath: $projectPath,\n'
+        '  projectType: $projectType,\n'
+        '  mode: $mode,\n'
+        '  includePatterns: $includePatterns,\n'
+        '  excludePatterns: $excludePatterns,\n'
+        '  verbose: $verbose,\n'
+        '  fileOrderingGroups: [\n    $groupsString\n  ]\n'
+        ')';
   }
 }
