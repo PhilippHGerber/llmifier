@@ -45,7 +45,10 @@ class FileMetadata {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FileMetadata && runtimeType == other.runtimeType && depth == other.depth && extension == other.extension;
+      other is FileMetadata && //
+          runtimeType == other.runtimeType &&
+          depth == other.depth &&
+          extension == other.extension;
 
   @override
   int get hashCode => depth.hashCode ^ extension.hashCode;

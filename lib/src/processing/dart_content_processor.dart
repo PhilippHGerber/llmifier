@@ -10,7 +10,11 @@ import 'content_processor.dart';
 
 class DartContentProcessor implements ContentProcessor {
   @override
-  String processContent(String relativePath, String content, ExtractionMode mode) {
+  String processContent(
+    String relativePath,
+    String content,
+    ExtractionMode mode,
+  ) {
     switch (mode) {
       case ExtractionMode.full:
         return content;
@@ -25,8 +29,9 @@ class DartContentProcessor implements ContentProcessor {
           );
 
           // Filter for actual errors, not hints/warnings if desired
-          final List<AnalysisError> parseErrors =
-              parseResult.errors.where((e) => e.errorCode.errorSeverity == ErrorSeverity.ERROR).toList();
+          final List<AnalysisError> parseErrors = parseResult.errors //
+              .where((e) => e.errorCode.errorSeverity == ErrorSeverity.ERROR)
+              .toList();
 
           if (parseErrors.isNotEmpty) {
             stderr.writeln(
@@ -37,7 +42,7 @@ class DartContentProcessor implements ContentProcessor {
             //   stderr.writeln("  - Message: ${error.message}");
             //   stderr.writeln("  - Offset: ${error.offset}, Length: ${error.length}");
             // }
-            return content; 
+            return content;
           }
 
           final compilationUnit = parseResult.unit;

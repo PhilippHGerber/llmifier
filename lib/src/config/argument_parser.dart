@@ -18,7 +18,8 @@ class ArgumentParser {
       ..addOption(
         'project',
         abbr: 'p',
-        help: 'Specify the project directory path.\n(Defaults to the current directory)',
+        help: 'Specify the project directory path.\n'
+            '(Defaults to the current directory)',
       )
 
       // Extraction Options
@@ -38,11 +39,13 @@ class ArgumentParser {
       )
       ..addMultiOption(
         'include',
-        help: 'Glob pattern for files/directories to include.\n(Can be specified multiple times)',
+        help: 'Glob pattern for files/directories to include.\n'
+            '(Can be specified multiple times)',
       )
       ..addMultiOption(
         'exclude',
-        help: 'Glob pattern for files/directories to exclude.\n(Can be specified multiple times)',
+        help: 'Glob pattern for files/directories to exclude.\n'
+            '(Can be specified multiple times)',
       )
 
       // Control Flags
@@ -56,7 +59,8 @@ class ArgumentParser {
         'init',
         abbr: 'i',
         negatable: false,
-        help: 'Generate a default llmifierrc.yaml configuration file in the project directory.',
+        help: 'Generate a default llmifierrc.yaml '
+            'configuration file in the project directory.',
       )
       ..addFlag(
         'help',
@@ -105,7 +109,9 @@ class ArgumentParser {
       mode: results['mode'] as String?,
       includePatterns: results['include'] as List<String>,
       excludePatterns: results['exclude'] as List<String>,
-      verbose: results.wasParsed('verbose') ? (results['verbose'] as bool) : null,
+      verbose: results.wasParsed('verbose') //
+          ? (results['verbose'] as bool)
+          : null,
       initConfig: results['init'] as bool,
       showHelp: false, // Already handled above
     );

@@ -18,5 +18,9 @@ abstract class ContentProcessor {
   ///   content should be processed.
   ///
   /// Returns the processed string content.
-  String processContent(String relativePath, String content, ExtractionMode mode);
+  String processContent(
+    String relativePath,
+    String content,
+    ExtractionMode mode,
+  );
 }

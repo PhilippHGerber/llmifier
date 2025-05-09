@@ -11,7 +11,8 @@ class AppInfo {
   static const String author = 'Software Engineering Philipp Gerber';
 
   /// The URL to the tool's repository.
-  static const String repositoryUrl = 'https://github.com/PhilippHGerber/llmifier';
+  static const String repositoryUrl =
+      'https://github.com/PhilippHGerber/llmifier';
 
   /// The URL to the tool's package page (e.g., on pub.dev).
   static const String packageUrl = 'https://pub.dev/packages/llmifier';

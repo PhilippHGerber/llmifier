@@ -30,7 +30,9 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
 
   void _newLineMaybe() {
     // Add separation if needed before the next element
-    if (!_isFirstMember && _buffer.isNotEmpty && !_buffer.toString().endsWith('\n\n')) {
+    if (!_isFirstMember && //
+        _buffer.isNotEmpty &&
+        !_buffer.toString().endsWith('\n\n')) {
       _buffer.writeln();
     }
     _isFirstMember = true; // Reset before potential write
@@ -47,7 +49,7 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       Token? token = comment.tokens.first;
       while (token != null) {
         // Write the token's lexeme directly, trim only trailing whitespace
-        _writeln(token.lexeme.trimRight()); // _writeln handles newline and _isFirstMember
+        _writeln(token.lexeme.trimRight());
         if (token == comment.tokens.last) break;
         token = token.next;
       }
@@ -56,7 +58,9 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
   }
 
   String _getSource(int startOffset, int endOffset) {
-    if (startOffset < 0 || endOffset > _sourceContent.length || startOffset > endOffset) {
+    if (startOffset < 0 || //
+        endOffset > _sourceContent.length ||
+        startOffset > endOffset) {
       return '/* Error: Invalid source range ($startOffset..$endOffset) */';
     }
     try {
@@ -93,7 +97,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -118,7 +125,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -144,7 +154,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -169,7 +182,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -194,7 +210,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -220,13 +239,18 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
   void visitEnumConstantDeclaration(EnumConstantDeclaration node) {
     _writeDocumentation(node);
     for (final annotation in node.metadata) {
-      final String annotationSource = _getSource(annotation.offset, annotation.end);
+      final String annotationSource = _getSource(
+        annotation.offset,
+        annotation.end,
+      );
       _writeln(annotationSource);
     }
     final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
     final int endOffset = node.end;
     final String constSignature = _getSource(startOffset, endOffset);
-    final String lineToWrite = constSignature.trimRight().endsWith(',') ? constSignature : "$constSignature,";
+    final String lineToWrite = constSignature.trimRight().endsWith(',') //
+        ? constSignature
+        : "$constSignature,";
     _writeln(lineToWrite); // Write the constant line
   }
 
@@ -236,11 +260,15 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
-      final int endOffset = node.functionExpression.parameters!.rightParenthesis.end;
+      final int endOffset =
+          node.functionExpression.parameters!.rightParenthesis.end;
       final String signature = _getSource(startOffset, endOffset);
       _writeln("$signature;");
     }
@@ -252,11 +280,15 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
-      final int endOffset = node.parameters?.rightParenthesis.end ?? node.name.end;
+      final int endOffset =
+          node.parameters?.rightParenthesis.end ?? node.name.end;
       final String signature = _getSource(startOffset, endOffset);
 
       // In API mode, always use a semicolon for non-external methods,
@@ -306,7 +338,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
         _newLineMaybe();
         _writeDocumentation(node);
         for (final annotation in node.metadata) {
-          final String annotationSource = _getSource(annotation.offset, annotation.end);
+          final String annotationSource = _getSource(
+            annotation.offset,
+            annotation.end,
+          );
           _writeln(annotationSource);
         }
         final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -329,24 +364,30 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
     if (_isMemberContainer(node.parent)) {
       // Check if *at least one* of the declared variables in this statement is public
       final variables = node.fields.variables; // Get the list of variable nodes
-      final bool hasPublicField = variables.any((v) => _isPublic(v.name.lexeme));
+      final bool hasPublicField =
+          variables.any((v) => _isPublic(v.name.lexeme));
 
       if (hasPublicField) {
         _writeDocumentation(node);
         for (final annotation in node.metadata) {
-          final String annotationSource = _getSource(annotation.offset, annotation.end);
+          final String annotationSource = _getSource(
+            annotation.offset,
+            annotation.end,
+          );
           _writeln(annotationSource);
         }
         // Check modifiers
         final bool isStatic = node.isStatic;
-        final VariableDeclarationList fieldList = node.fields; // Cache for easier access
+        final VariableDeclarationList fieldList =
+            node.fields; // Cache for easier access
         final bool isConst = fieldList.keyword?.type == Keyword.CONST;
         final bool isFinal = fieldList.keyword?.type == Keyword.FINAL;
 
         // --- LATE CHECK ---
         // Check if the token *before* the main keyword (or type if no keyword) is 'late'
         // This is heuristic - assumes 'late' comes right before 'final'/'var'/type
-        Token? tokenBeforeKeywordOrType = fieldList.keyword?.previous ?? fieldList.type?.beginToken.previous;
+        Token? tokenBeforeKeywordOrType =
+            fieldList.keyword?.previous ?? fieldList.type?.beginToken.previous;
         final bool isLate = tokenBeforeKeywordOrType?.type == Keyword.LATE;
 
         // Special handling for static const
@@ -368,7 +409,9 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
           // Type annotation
           final typeAnnotation = fieldList.type;
           if (typeAnnotation != null) {
-            buffer.write('${_getSource(typeAnnotation.offset, typeAnnotation.end)} ');
+            buffer.write(
+              '${_getSource(typeAnnotation.offset, typeAnnotation.end)} ',
+            );
           } else if (fieldList.keyword?.type == Keyword.VAR) {
             // Keep 'var' if explicitly used and no type
             buffer.write('var ');
@@ -397,12 +440,17 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
   @override
   void visitTopLevelVariableDeclaration(TopLevelVariableDeclaration node) {
     if (node.parent is CompilationUnit) {
-      final bool hasPublicVar = node.variables.variables.any((v) => _isPublic(v.name.lexeme));
+      final bool hasPublicVar = node.variables.variables.any(
+        (v) => _isPublic(v.name.lexeme),
+      );
       if (hasPublicVar) {
         _newLineMaybe();
         _writeDocumentation(node);
         for (final annotation in node.metadata) {
-          final String annotationSource = _getSource(annotation.offset, annotation.end);
+          final String annotationSource = _getSource(
+            annotation.offset,
+            annotation.end,
+          );
           _writeln(annotationSource);
         }
         final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -419,7 +467,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
@@ -435,7 +486,10 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
       _newLineMaybe();
       _writeDocumentation(node);
       for (final annotation in node.metadata) {
-        final String annotationSource = _getSource(annotation.offset, annotation.end);
+        final String annotationSource = _getSource(
+          annotation.offset,
+          annotation.end,
+        );
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;

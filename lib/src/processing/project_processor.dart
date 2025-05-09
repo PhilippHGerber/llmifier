@@ -30,7 +30,7 @@ class ProjectProcessor {
   /// the file ordering strategy.
   ProjectProcessor(this._config)
       : _dartProcessor = DartContentProcessor(),
-        _orderingStrategy = FileOrderingStrategy() {
+        _orderingStrategy = FileOrderingStrategy(_config) {
     // <-- Initialize strategy
     // Initialize other processors if necessary
     if (_config.verbose) {
@@ -73,7 +73,8 @@ class ProjectProcessor {
       packageName = pubspecInfo['name'];
       packageVersion = pubspecInfo['version'];
       if (_config.verbose) {
-        print('Extracted from pubspec.yaml: name=$packageName, version=$packageVersion');
+        print(
+            'Extracted from pubspec.yaml: name=$packageName, version=$packageVersion');
       }
     } else if (_config.verbose) {
       print('pubspec.yaml not found in extracted files.');
@@ -81,11 +82,14 @@ class ProjectProcessor {
 
     // 3. Sort the processed files using the ordering strategy <-- NEW STEP
     if (_config.verbose) {
-      print('Applying file ordering strategy to ${processedFiles.length} processed files...');
+      print(
+          'Applying file ordering strategy to ${processedFiles.length} processed files...');
     }
-    final List<FileEntry> sortedFiles = _orderingStrategy.organizeFiles(processedFiles);
+    final List<FileEntry> sortedFiles =
+        _orderingStrategy.organizeFiles(processedFiles);
     if (_config.verbose) {
-      print('File ordering completed. Resulting order has ${sortedFiles.length} files.');
+      print(
+          'File ordering completed. Resulting order has ${sortedFiles.length} files.');
       // Optional: Print the sorted file names for debugging
       // sortedFiles.forEach((f) => print('  - ${f.relativePath}'));
     }
@@ -110,7 +114,8 @@ class ProjectProcessor {
     // Determine if it's a Dart file
     if (entry.relativePath.endsWith('.dart')) {
       if (_config.verbose) {
-        print('  Processing Dart file content: ${entry.relativePath} (Mode: ${_config.mode.name})');
+        print(
+            '  Processing Dart file content: ${entry.relativePath} (Mode: ${_config.mode.name})');
       }
       final processedContent = _dartProcessor.processContent(
         entry.relativePath,

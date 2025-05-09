@@ -37,7 +37,8 @@ class FileExtractor {
     final projectDir = Directory(_config.projectPath);
 
     if (!projectDir.existsSync()) {
-      stderr.writeln('Error: Project directory not found: ${_config.projectPath}');
+      stderr.writeln(
+          'Error: Project directory not found: ${_config.projectPath}');
       return [];
     }
 
@@ -58,16 +59,22 @@ class FileExtractor {
 
   /// Recursively processes a directory and its contents.
   void _processDirectory(Directory currentDir, List<FileEntry> results) {
-    final String currentDirPathAbsolute = path.normalize(currentDir.absolute.path);
-    final String projectRootPathAbsolute = path.normalize(Directory(_config.projectPath).absolute.path);
+    final String currentDirPathAbsolute =
+        path.normalize(currentDir.absolute.path);
+    final String projectRootPathAbsolute =
+        path.normalize(Directory(_config.projectPath).absolute.path);
 
     if (_config.verbose) {
-      final String relativePathForLog = path.relative(currentDirPathAbsolute, from: projectRootPathAbsolute);
-      print('Processing directory: ${relativePathForLog.isEmpty ? "." : relativePathForLog}');
+      final String relativePathForLog =
+          path.relative(currentDirPathAbsolute, from: projectRootPathAbsolute);
+      print(
+          'Processing directory: ${relativePathForLog.isEmpty ? "." : relativePathForLog}');
     }
 
     try {
-      final List<FileSystemEntity> entities = currentDir.listSync(followLinks: false);
+      final List<FileSystemEntity> entities = currentDir.listSync(
+        followLinks: false,
+      );
 
       // Sort entities for deterministic order (optional but good practice)
       // Directories first - then alphabetical
@@ -87,7 +94,9 @@ class FileExtractor {
         // Added check to prevent infinite loops on links like .git/logs/refs -> ../../logs/refs
         if (baseName.startsWith('.') || entity is Link) {
           if (_config.verbose) {
-            if (baseName.startsWith('.')) print('  Skipping hidden entry: $baseName');
+            if (baseName.startsWith('.')) {
+              print('  Skipping hidden entry: $baseName');
+            }
             if (entity is Link) print('  Skipping link: $baseName');
           }
           continue;
@@ -101,7 +110,8 @@ class FileExtractor {
         // 2. Check exclusion patterns
         if (_shouldExclude(relativePath, entity is Directory)) {
           if (_config.verbose) {
-            print('  Skipping excluded ${entity is Directory ? "directory" : "file"}: $relativePath');
+            print(
+                '  Skipping excluded ${entity is Directory ? "directory" : "file"}: $relativePath');
           }
           continue;
         }
@@ -117,13 +127,15 @@ class FileExtractor {
             _addFile(entity, relativePath, results);
           } else {
             if (_config.verbose) {
-              print('  Skipping file (does not match include patterns): $relativePath');
+              print(
+                  '  Skipping file (does not match include patterns): $relativePath');
             }
           }
         }
       }
     } on FileSystemException catch (e) {
-      stderr.writeln("Warning: Could not list directory ${currentDir.path}: $e");
+      stderr
+          .writeln("Warning: Could not list directory ${currentDir.path}: $e");
     }
   }
 

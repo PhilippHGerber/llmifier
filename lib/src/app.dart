@@ -19,7 +19,8 @@ class LlmifierApp {
     Settings settings;
     Configuration configuration;
     // Determine initial verbosity from CLI args for early messages like --init
-    bool isInitVerbose = arguments.contains('-l') || arguments.contains('--verbose');
+    bool isInitVerbose =
+        arguments.contains('-l') || arguments.contains('--verbose');
 
     try {
       // 1. Parse CLI arguments
@@ -56,7 +57,8 @@ class LlmifierApp {
       return 1; // Indicate failure due to parsing error
     } catch (e, stackTrace) {
       // Catch potential errors during parsing itself
-      stderr.writeln('An unexpected error occurred during argument parsing: $e');
+      stderr
+          .writeln('An unexpected error occurred during argument parsing: $e');
       // Print stacktrace only if explicitly requested early on
       if (isInitVerbose) {
         stderr.writeln(stackTrace);
@@ -90,14 +92,16 @@ class LlmifierApp {
       if (isVerbose) print('Extracted ${rawFiles.length} raw files.');
 
       // 4. Process & Organize Files
-      if (isVerbose) print('Proceeding with project processing and file ordering...');
+      if (isVerbose) {
+        print('Proceeding with project processing and file ordering...');
+      }
       final projectProcessor = ProjectProcessor(configuration);
       final projectContext = projectProcessor.process(rawFiles);
       if (isVerbose) print('Processing and ordering complete.');
 
       // 5. Write Output
       if (isVerbose) print('Proceeding with output generation...');
-      final outputWriter = TextOutputWriter(); // Or get from factory based on config
+      final outputWriter = TextOutputWriter();
       await outputWriter.write(projectContext, configuration);
       print('Output generated successfully at: ${configuration.outputPath}');
 
