@@ -15,6 +15,7 @@ class FileOrderingStrategy {
   static const String _groupDocumentation = 'Documentation';
   static const String _groupApi = 'API';
   static const String _groupExecutable = 'Executable';
+  static const String _groupPackages = 'Packages';
   static const String _groupExample = 'Example';
   static const String _groupTest = 'Test';
   static const String _groupOther = 'Other'; // Catch-all for unmatched files
@@ -50,22 +51,27 @@ class FileOrderingStrategy {
     // 3. Executable
     FileGroup(
       name: _groupExecutable,
-      patterns: ["bin/**.dart"],
+      patterns: ["bin/**"],
     ),
     // 4. API
     FileGroup(
       name: _groupApi,
-      patterns: ["lib/**.dart"],
+      patterns: ["lib/**"],
+    ),
+    // 5. Packages
+    FileGroup(
+      name: _groupPackages,
+      patterns: ["packages/**"],
     ),
     // 5. Example
     FileGroup(
       name: _groupExample,
-      patterns: ["example/**.dart"],
+      patterns: ["example/**"],
     ),
     // 6. Test
     FileGroup(
       name: _groupTest,
-      patterns: ["test/**.dart"],
+      patterns: ["test/**"],
     ),
     // Note: 'Other' group is handled implicitly if no pattern matches.
   ];
