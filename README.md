@@ -68,6 +68,7 @@ llmifier -h
 ## How Developers Use llmifier
 
 ### For Code Generation
+
 Structure your whole project context to get precise, relevant code generation that fits your architecture and styles:
 
 ```
@@ -78,6 +79,7 @@ Structure your whole project context to get precise, relevant code generation th
 ```
 
 ### For Code Reviews
+
 Get meaningful, holistic code reviews that understand your entire project:
 
 ```
@@ -88,6 +90,7 @@ Get meaningful, holistic code reviews that understand your entire project:
 ```
 
 ### For Documentation
+
 Generate comprehensive documentation based on actual code structure:
 
 ```
@@ -97,6 +100,7 @@ Generate comprehensive documentation based on actual code structure:
 ```
 
 ### For Onboarding
+
 Help new team members (or your LLM assistant) quickly understand your codebase:
 
 ```
@@ -124,7 +128,6 @@ exclude:
   - "**build"
   - "**.g.dart"
 ```
-
 
 ## Contributing
 
