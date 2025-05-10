@@ -267,9 +267,19 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
-      final int endOffset =
-          node.functionExpression.parameters!.rightParenthesis.end;
-      final String signature = _getSource(startOffset, endOffset);
+
+      final int endOffset;
+      // Check if it's a getter (no parameters) or a regular function/setter
+      if (node.isGetter || node.functionExpression.parameters == null) {
+        // For GETTERS: Signature ends before the body (e.g., before '=>' or '{').
+        endOffset = node.functionExpression.body.offset;
+      } else {
+        // For regular functions or SETTERS: Signature ends after the parameter list.
+        endOffset = node.functionExpression.parameters!.rightParenthesis.end;
+      }
+
+      final String signature = _getSource(startOffset, endOffset).trimRight();
+
       _writeln("$signature;");
     }
   }
@@ -287,17 +297,41 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
         _writeln(annotationSource);
       }
       final int startOffset = node.firstTokenAfterCommentAndMetadata.offset;
-      final int endOffset =
-          node.parameters?.rightParenthesis.end ?? node.name.end;
-      final String signature = _getSource(startOffset, endOffset);
+      final int endOffset;
 
-      // In API mode, always use a semicolon for non-external methods,
-      // regardless of original body ({}, =>, or block).
-      if (node.externalKeyword == null) {
-        _writeln("$signature;"); // Always add semicolon
+      if (node.isGetter) {
+        // Getter: Type get name; Signature ends before body.
+        endOffset = node.body.offset;
+      } else if (node.isSetter) {
+        // Setter: set name(Type val); Signature ends after parameters.
+        endOffset = node.parameters!.rightParenthesis.end;
       } else {
-        _writeln(signature); // External methods don't have body/semicolon here
+        // Regular method, abstract method, or external method
+        if (node.parameters != null) {
+          // Method with parameters (even if empty like "method()")
+          endOffset = node.parameters!.rightParenthesis.end;
+        } else {
+          // Method without a parameter list node in AST.
+          // This can be an abstract method like "Type m();" or an external method like "external Type m();"
+          // or a getter (which is handled above).
+          // For abstract/external methods, node.body.offset often points to the semicolon.
+          // If the semicolon is part of the body token, we might get it. If not, we add it.
+          endOffset = node.body.offset;
+        }
       }
+
+      String signature = _getSource(startOffset, endOffset).trimRight();
+
+      // For API view, all method declarations (regular, abstract, external, getters, setters)
+      // should end with a semicolon.
+      // Getters and setters are handled by their specific offset logic ending before the body,
+      // so they will naturally need a semicolon.
+      // Regular methods, abstract methods, and external methods also need one.
+      if (!signature.endsWith(';')) {
+        signature = '$signature;';
+      }
+
+      _writeln(signature);
     }
   }
 
@@ -364,8 +398,7 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
     if (_isMemberContainer(node.parent)) {
       // Check if *at least one* of the declared variables in this statement is public
       final variables = node.fields.variables; // Get the list of variable nodes
-      final bool hasPublicField =
-          variables.any((v) => _isPublic(v.name.lexeme));
+      final bool hasPublicField = variables.any((v) => _isPublic(v.name.lexeme));
 
       if (hasPublicField) {
         _writeDocumentation(node);
@@ -378,16 +411,14 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
         }
         // Check modifiers
         final bool isStatic = node.isStatic;
-        final VariableDeclarationList fieldList =
-            node.fields; // Cache for easier access
+        final VariableDeclarationList fieldList = node.fields; // Cache for easier access
         final bool isConst = fieldList.keyword?.type == Keyword.CONST;
         final bool isFinal = fieldList.keyword?.type == Keyword.FINAL;
 
         // --- LATE CHECK ---
         // Check if the token *before* the main keyword (or type if no keyword) is 'late'
         // This is heuristic - assumes 'late' comes right before 'final'/'var'/type
-        Token? tokenBeforeKeywordOrType =
-            fieldList.keyword?.previous ?? fieldList.type?.beginToken.previous;
+        Token? tokenBeforeKeywordOrType = fieldList.keyword?.previous ?? fieldList.type?.beginToken.previous;
         final bool isLate = tokenBeforeKeywordOrType?.type == Keyword.LATE;
 
         // Special handling for static const

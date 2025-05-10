@@ -1,5 +1,3 @@
-// FILE: test/processing/api_extraction_test.dart
-
 import 'package:llmifier/src/models/enums.dart';
 import 'package:llmifier/src/processing/dart_content_processor.dart';
 import 'package:test/test.dart';
@@ -42,6 +40,56 @@ int add(int a, int b) {
         final expectedOutput = r'''
 /// Adds two numbers.
 int add(int a, int b);
+''';
+        expect(processApi(input), equals(expectedOutput));
+      });
+
+      test('should extract public top-level getter signature (inferred type)', () {
+        final input = r'''
+/// A global configuration.
+get globalConfig => 'default';
+''';
+        final expectedOutput = r'''
+/// A global configuration.
+get globalConfig;
+''';
+        expect(processApi(input), equals(expectedOutput));
+      });
+
+      test('should extract public top-level getter signature (explicit type)', () {
+        final input = r'''
+/// The current user's name.
+String get currentUserName {
+  return 'Guest';
+}
+''';
+        final expectedOutput = r'''
+/// The current user's name.
+String get currentUserName;
+''';
+        expect(processApi(input), equals(expectedOutput));
+      });
+
+      test('should extract public top-level getter (problem file example)', () {
+        final input = r'''
+ShVersion get shVersion => read(shVersionRef);
+''';
+        final expectedOutput = r'''
+ShVersion get shVersion;
+''';
+        expect(processApi(input), equals(expectedOutput));
+      });
+
+      test('should extract public top-level setter signature', () {
+        final input = r'''
+/// Sets the global theme.
+set theme(String newTheme) {
+  // implementation
+}
+''';
+        final expectedOutput = r'''
+/// Sets the global theme.
+set theme(String newTheme);
 ''';
         expect(processApi(input), equals(expectedOutput));
       });
@@ -486,6 +534,58 @@ class GetSet {
 
   /// Set a new value.
   set value(int newValue);
+}
+''';
+        expect(processApi(input), equals(expectedOutput));
+      });
+
+      test('should correctly extract class method, getter, and setter signatures', () {
+        final input = r'''
+class MyService {
+  /// A regular method.
+  void performAction(String input) {
+    // implementation
+  }
+
+  /// A getter property.
+  String get status {
+    return "active";
+  }
+
+  /// A setter property.
+  set newStatus(String s) {
+    // implementation
+  }
+
+  /// Getter with no explicit type
+  get version => "1.0";
+
+  /// Abstract method
+  void mustImplement();
+
+  /// External method
+  external void nativeCall(int code);
+}
+''';
+        final expectedOutput = r'''
+class MyService {
+  /// A regular method.
+  void performAction(String input);
+
+  /// A getter property.
+  String get status;
+
+  /// A setter property.
+  set newStatus(String s);
+
+  /// Getter with no explicit type
+  get version;
+
+  /// Abstract method
+  void mustImplement();
+
+  /// External method
+  external void nativeCall(int code);
 }
 ''';
         expect(processApi(input), equals(expectedOutput));
