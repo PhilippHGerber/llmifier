@@ -2,7 +2,7 @@ name: llmifier
 description: >-
   A CLI tool to extract, structure, and consolidate Dart & Flutter
   project files into a single, LLM-friendly context.
-version: 0.2.0
+version: 0.2.1-dev
 homepage: https://github.com/PhilippHGerber/llmifier
 repository: https://github.com/PhilippHGerber/llmifier
 issue_tracker: https://github.com/PhilippHGerber/llmifier/issues
