@@ -28,8 +28,7 @@ class FileOrderingStrategy {
       return [];
     }
     if (_verbose) {
-      print(
-          'FileOrderingStrategy: Starting to organize ${allFiles.length} files.');
+      print('FileOrderingStrategy: Starting to organize ${allFiles.length} files.');
       print('Using ${_fileGroupsConfig.length} configured file groups.');
     }
 
@@ -60,18 +59,24 @@ class FileOrderingStrategy {
 
       if (_verbose) {
         print(
-            '\nProcessing group "${groupConfig.name}" with ${filesInThisGroup.length} files.');
+          '\nProcessing group "${groupConfig.name}" '
+          'with ${filesInThisGroup.length} files.',
+        );
       }
 
       // Process files of this group with the new context-aware logic
-      final orderedFilesInGroup =
-          _processGroupFilesInContexts(filesInThisGroup, groupConfig);
+      final orderedFilesInGroup = _processGroupFilesInContexts(
+        filesInThisGroup,
+        groupConfig,
+      );
       finalSortedFiles.addAll(orderedFilesInGroup);
     }
 
     if (_verbose) {
       print(
-          '\nFileOrderingStrategy: Organization complete. Final list has ${finalSortedFiles.length} files.');
+        '\nFileOrderingStrategy: Organization complete. '
+        'Final list has ${finalSortedFiles.length} files.',
+      );
       // finalSortedFiles.forEach((f) => print('  - ${f.relativePath}'));
     }
     return finalSortedFiles;
@@ -100,7 +105,9 @@ class FileOrderingStrategy {
 
     if (_verbose && filesByContextPath.length > 1) {
       print(
-          '  Group "${groupConfig.name}": Identified ${filesByContextPath.keys.length} contexts: ${filesByContextPath.keys.join(", ")}');
+        '  Group "${groupConfig.name}": Identified ${filesByContextPath.keys.length} '
+        'contexts: ${filesByContextPath.keys.join(", ")}',
+      );
     }
 
     // Step 2: Sort the contexts themselves (e.g., alphabetically)
@@ -117,7 +124,9 @@ class FileOrderingStrategy {
       if (_verbose && filesByContextPath.length > 1) {
         // Log only if there are multiple contexts for clarity
         print(
-            '    Processing context "$contextPath" with ${filesInThisContext.length} files...');
+          '    Processing context "$contextPath" '
+          'with ${filesInThisContext.length} files...',
+        );
       }
 
       List<FileEntry> orderedByDirective = [];
@@ -132,15 +141,19 @@ class FileOrderingStrategy {
           // Find files in the current context that match this basename
           List<FileEntry> matchingFilesInContextForOrder = [];
           for (final entry in remainingInContext) {
-            // This condition checks if the file's basename matches AND
-            // if the file's path starts with the current contextPath.
-            // This is a heuristic to apply 'order' somewhat locally.
-            // A more precise rule might be needed if 'order' should only apply
-            // to files *directly* under contextPath, not in sub-subdirectories.
+            bool isInContext;
+            if (contextPath == ".") {
+              // For root context, a file is in context if its dirname is '.'
+              // This means it's directly in the root, not in a subdirectory.
+              isInContext = p.url.dirname(entry.relativePath) == ".";
+            } else {
+              // For non-root contexts, check if the path starts with the contextPath
+              isInContext = entry.relativePath.startsWith(contextPath);
+            }
+
             if (p.basename(entry.relativePath) == orderedBaseName &&
-                entry.relativePath.startsWith(contextPath) &&
+                isInContext && // Verwende die neue Variable isInContext
                 !placedByOrder.contains(entry)) {
-              // Ensure not already placed by a previous rule in group.order
               matchingFilesInContextForOrder.add(entry);
             }
           }
@@ -164,8 +177,7 @@ class FileOrderingStrategy {
         );
 
         if (_verbose && orderedByDirective.isNotEmpty) {
-          print(
-              '      Context "$contextPath": Applied fixed order for ${orderedByDirective.length} files.');
+          print('      Context "$contextPath": Applied fixed order for ${orderedByDirective.length} files.');
         }
       }
 
@@ -236,8 +248,7 @@ class FileOrderingStrategy {
     // and there's a subdirectory, that subdirectory becomes the context.
     if (pathSegments.length > 1) {
       String firstSegment = pathSegments.first;
-      bool isKnownTopLevelPattern =
-          groupCfg.patterns.any((pat) => pat.startsWith("$firstSegment/**"));
+      bool isKnownTopLevelPattern = groupCfg.patterns.any((pat) => pat.startsWith("$firstSegment/**"));
       if (isKnownTopLevelPattern) {
         return p.url.join(
           pathSegments[0],
