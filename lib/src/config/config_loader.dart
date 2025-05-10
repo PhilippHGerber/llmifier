@@ -71,8 +71,10 @@ class ConfigLoader {
       }
     } else {
       if (cliVerbose) {
-        print('Configuration file not found. '
-            'Using defaults and CLI arguments.');
+        print(
+          'Configuration file not found. '
+          'Using defaults and CLI arguments.',
+        );
       }
     }
 
@@ -187,8 +189,10 @@ class ConfigLoader {
         projectType = ProjectType.values.byName(yamlProjectType.toLowerCase());
       } catch (_) {
         if (verboseLog) {
-          print("YAML: Invalid value '$yamlProjectType' "
-              "for 'projectType'. Using base.");
+          print(
+            "YAML: Invalid value '$yamlProjectType' "
+            "for 'projectType'. Using base.",
+          );
         }
       }
     }
@@ -227,8 +231,10 @@ class ConfigLoader {
     final fileOrderingSection = yamlData['fileOrdering'];
     if (fileOrderingSection is! Map<String, dynamic>) {
       if (fileOrderingSection != null && verboseLog) {
-        print("YAML: 'fileOrdering' section is not a map. "
-            "Using default/previous groups.");
+        print(
+          "YAML: 'fileOrdering' section is not a map. "
+          "Using default/previous groups.",
+        );
       }
       return baseConfig; // No valid section, return base
     }
@@ -236,8 +242,10 @@ class ConfigLoader {
     final groupsData = fileOrderingSection['groups'];
     if (groupsData is! List) {
       if (groupsData != null && verboseLog) {
-        print("YAML: 'fileOrdering.groups' is not a list. "
-            "Using default/previous groups.");
+        print(
+          "YAML: 'fileOrdering.groups' is not a list. "
+          "Using default/previous groups.",
+        );
       }
       return baseConfig; // No valid groups list, return base
     }
@@ -245,9 +253,12 @@ class ConfigLoader {
     final List<ConfigurableFileGroup> loadedGroups = [];
     for (final groupEntry in groupsData) {
       if (groupEntry is! Map<String, dynamic>) {
-        if (verboseLog)
-          print("YAML: Entry in 'fileOrdering.groups' is not a map. "
-              "Skipping entry.");
+        if (verboseLog) {
+          print(
+            "YAML: Entry in 'fileOrdering.groups' is not a map. "
+            "Skipping entry.",
+          );
+        }
         continue;
       }
 
@@ -259,8 +270,10 @@ class ConfigLoader {
 
       if (name == null || name.isEmpty) {
         if (verboseLog) {
-          print("YAML: Group missing 'name' or name is empty. "
-              "Skipping group.");
+          print(
+            "YAML: Group missing 'name' or name is empty. "
+            "Skipping group.",
+          );
         }
         continue;
       }
@@ -269,8 +282,9 @@ class ConfigLoader {
           !patternsDynamic.every((p) => p is String)) {
         if (verboseLog) {
           print(
-              "YAML: Group '$name' missing 'patterns', patterns empty, or not all strings. "
-              "Skipping group.");
+            "YAML: Group '$name' missing 'patterns', patterns empty, or not all strings. "
+            "Skipping group.",
+          );
         }
         continue;
       }
@@ -287,8 +301,9 @@ class ConfigLoader {
         } catch (_) {
           if (verboseLog) {
             print(
-                "YAML: Group '$name' has invalid 'sortBy' value '$sortByString'. "
-                "Using default '${sortBy.name}'.");
+              "YAML: Group '$name' has invalid 'sortBy' value '$sortByString'. "
+              "Using default '${sortBy.name}'.",
+            );
           }
         }
       }
@@ -302,13 +317,17 @@ class ConfigLoader {
 
     if (loadedGroups.isEmpty && groupsData.isNotEmpty && verboseLog) {
       print(
-          "YAML: 'fileOrdering.groups' was present but no valid groups could be loaded. Using default/previous groups.");
+        "YAML: 'fileOrdering.groups' was present but no valid groups could be loaded. "
+        "Using default/previous groups.",
+      );
       return baseConfig;
     }
     if (loadedGroups.isEmpty && groupsData.isEmpty && verboseLog) {
       // This is fine, means user wants to clear default groups or provided an empty list
       print(
-          "YAML: 'fileOrdering.groups' is empty. All files will fall into a default 'Other' group or be unsorted if no catch-all.");
+        "YAML: 'fileOrdering.groups' is empty. "
+        "All files will fall into a default 'Other' group or be unsorted if no catch-all.",
+      );
     }
 
     // If any groups were successfully loaded from YAML, they REPLACE the default groups.

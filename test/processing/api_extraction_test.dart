@@ -44,7 +44,8 @@ int add(int a, int b);
         expect(processApi(input), equals(expectedOutput));
       });
 
-      test('should extract public top-level getter signature (inferred type)', () {
+      test('should extract public top-level getter signature (inferred type)',
+          () {
         final input = r'''
 /// A global configuration.
 get globalConfig => 'default';
@@ -56,7 +57,8 @@ get globalConfig;
         expect(processApi(input), equals(expectedOutput));
       });
 
-      test('should extract public top-level getter signature (explicit type)', () {
+      test('should extract public top-level getter signature (explicit type)',
+          () {
         final input = r'''
 /// The current user's name.
 String get currentUserName {
@@ -279,7 +281,8 @@ class MixedVisibility {
         expect(processApi(input), equals(expectedOutput));
       });
 
-      test('should produce empty output for file with only private members', () {
+      test('should produce empty output for file with only private members',
+          () {
         final input = r'''
 /// Library comment
 library private_stuff;
@@ -299,7 +302,9 @@ String _privateTopLevel() => '';
         expect(processApi(input), equals(expectedOutput));
       });
 
-      test('should keep public function signature even if it returns private type', () {
+      test(
+          'should keep public function signature even if it returns private type',
+          () {
         final input = r'''
         class _PrivateType {}
 
@@ -539,7 +544,9 @@ class GetSet {
         expect(processApi(input), equals(expectedOutput));
       });
 
-      test('should correctly extract class method, getter, and setter signatures', () {
+      test(
+          'should correctly extract class method, getter, and setter signatures',
+          () {
         final input = r'''
 class MyService {
   /// A regular method.
@@ -715,7 +722,8 @@ void process({@Required String name});
     // Ignored Elements Group
     // =========================================================================
     group('Ignored Elements', () {
-      test('should ignore directives (import, export, library, part, part of)', () {
+      test('should ignore directives (import, export, library, part, part of)',
+          () {
         // --- CORRECTED input: Removed invalid 'part of' inside class ---
         final input = r'''
          library my_lib;

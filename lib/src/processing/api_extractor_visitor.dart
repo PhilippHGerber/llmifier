@@ -398,7 +398,9 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
     if (_isMemberContainer(node.parent)) {
       // Check if *at least one* of the declared variables in this statement is public
       final variables = node.fields.variables; // Get the list of variable nodes
-      final bool hasPublicField = variables.any((v) => _isPublic(v.name.lexeme));
+      final bool hasPublicField = variables.any(
+        (v) => _isPublic(v.name.lexeme),
+      );
 
       if (hasPublicField) {
         _writeDocumentation(node);
@@ -411,14 +413,16 @@ class ApiExtractorVisitor extends SimpleAstVisitor<void> {
         }
         // Check modifiers
         final bool isStatic = node.isStatic;
-        final VariableDeclarationList fieldList = node.fields; // Cache for easier access
+        final VariableDeclarationList fieldList = node.fields;
         final bool isConst = fieldList.keyword?.type == Keyword.CONST;
         final bool isFinal = fieldList.keyword?.type == Keyword.FINAL;
 
         // --- LATE CHECK ---
         // Check if the token *before* the main keyword (or type if no keyword) is 'late'
         // This is heuristic - assumes 'late' comes right before 'final'/'var'/type
-        Token? tokenBeforeKeywordOrType = fieldList.keyword?.previous ?? fieldList.type?.beginToken.previous;
+        Token? tokenBeforeKeywordOrType = fieldList.keyword?.previous //
+            ??
+            fieldList.type?.beginToken.previous;
         final bool isLate = tokenBeforeKeywordOrType?.type == Keyword.LATE;
 
         // Special handling for static const

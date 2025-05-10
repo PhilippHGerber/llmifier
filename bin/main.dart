@@ -30,7 +30,10 @@ Future<void> main(List<String> arguments) async {
       stderr.writeln(stackTrace);
     } else {
       // In production mode, you might want to log the error to a file or monitoring service
-      File('llmifier_log.txt').writeAsStringSync('$e\n$stackTrace', mode: FileMode.append);
+      File('llmifier_log.txt').writeAsStringSync(
+        '$e\n$stackTrace',
+        mode: FileMode.append,
+      );
     }
     exitCode = 1;
     print('llmifier finished with errors.');

@@ -28,7 +28,10 @@ class FileOrderingStrategy {
       return [];
     }
     if (_verbose) {
-      print('FileOrderingStrategy: Starting to organize ${allFiles.length} files.');
+      print(
+        'FileOrderingStrategy: '
+        'Starting to organize ${allFiles.length} files.',
+      );
       print('Using ${_fileGroupsConfig.length} configured file groups.');
     }
 
@@ -177,7 +180,10 @@ class FileOrderingStrategy {
         );
 
         if (_verbose && orderedByDirective.isNotEmpty) {
-          print('      Context "$contextPath": Applied fixed order for ${orderedByDirective.length} files.');
+          print(
+            '      Context "$contextPath": '
+            'Applied fixed order for ${orderedByDirective.length} files.',
+          );
         }
       }
 
@@ -248,7 +254,9 @@ class FileOrderingStrategy {
     // and there's a subdirectory, that subdirectory becomes the context.
     if (pathSegments.length > 1) {
       String firstSegment = pathSegments.first;
-      bool isKnownTopLevelPattern = groupCfg.patterns.any((pat) => pat.startsWith("$firstSegment/**"));
+      bool isKnownTopLevelPattern = groupCfg.patterns.any(
+        (pat) => pat.startsWith("$firstSegment/**"),
+      );
       if (isKnownTopLevelPattern) {
         return p.url.join(
           pathSegments[0],
