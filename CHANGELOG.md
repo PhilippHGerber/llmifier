@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.2.1
+
+2025-05-10
+
+### Bug Fixes
+
+- **API Extraction:** Improved the accuracy and completeness of API signature extraction.
+- **File Ordering:** Corrected an issue where the `order` directive within file group configurations was not being properly applied to root-level files.
+
 ## 0.2.0
 
 ### Features
