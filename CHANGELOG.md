@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.2.2
+
+2025-05-11
+
+### Refactoring
+
+- **Output:** Streamlined the `write` method and improved header formatting for better readability.
+
 ## 0.2.1
 
 2025-05-10
@@ -10,6 +18,8 @@
 - **File Ordering:** Corrected an issue where the `order` directive within file group configurations was not being properly applied to root-level files.
 
 ## 0.2.0
+
+2025-05-09
 
 ### Features
 
